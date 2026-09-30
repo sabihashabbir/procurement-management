@@ -1,22 +1,24 @@
-Procurement Management System
+# Procurement Management System
 
-Developed by Sabiha Chikte
-B.E. Information Technology
+**Developed by Sabiha Chikte**  
+**B.E. Information Technology**
 
 A full-stack procurement management system designed to centralize and streamline procurement operations across purchase requests, purchase orders, suppliers, contracts, transactions, departments, and categories.
 
-1. Project Overview
+---
+
+## 1. Project Overview
 
 The Procurement Management System provides a centralized platform for managing procurement activities through a modular web application.
 
 The project is divided into two main layers:
 
-Frontend — React + TypeScript application for the user interface
+- **Frontend** — React + TypeScript application for the user interface
+- **Backend** — FastAPI application providing REST APIs and database operations
 
-Backend — FastAPI application providing REST APIs and database operations
+### Main procurement flow
 
-Main procurement flow
-
+```text
 Purchase Request
        ↓
    Approval
@@ -30,195 +32,136 @@ Supplier
 Contract / Transaction
        ↓
 Procurement Records
+```
 
-2. Technology Stack
+---
 
-Frontend
+## 2. Technology Stack
 
-React
+### Frontend
 
-TypeScript
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Axios / REST API integration
+- Lucide React
+- Recharts
 
-Vite
+### Backend
 
-Tailwind CSS
+- Python
+- FastAPI
+- SQLAlchemy
+- Pydantic
+- Uvicorn
 
-Axios / REST API integration
+### Database
 
-Lucide React
+- SQLite
 
-Recharts
+### Development & Version Control
 
-Backend
+- Visual Studio Code
+- Git
+- GitHub
+- FastAPI Swagger / OpenAPI
 
-Python
+---
 
-FastAPI
+## 3. Application Modules
 
-SQLAlchemy
+| Module | Current Status |
+|---|---|
+| Dashboard | Implemented |
+| Purchase Requests | Implemented |
+| Purchase Orders | Implemented |
+| Suppliers | Implemented |
+| Contracts | Implemented |
+| Transactions | Implemented |
+| Categories | Implemented |
+| Departments | Implemented |
+| Approvals | Foundation / In Progress |
+| Analytics | UI Placeholder |
+| Settings | UI Placeholder |
 
-Pydantic
-
-Uvicorn
-
-Database
-
-SQLite
-
-Development & Version Control
-
-Visual Studio Code
-
-Git
-
-GitHub
-
-FastAPI Swagger / OpenAPI
-
-3. Application Modules
-
-Module
-
-Current Status
-
-Dashboard
-
-Implemented
-
-Purchase Requests
-
-Implemented
-
-Purchase Orders
-
-Implemented
-
-Suppliers
-
-Implemented
-
-Contracts
-
-Implemented
-
-Transactions
-
-Implemented
-
-Categories
-
-Implemented
-
-Departments
-
-Implemented
-
-Approvals
-
-Foundation / In Progress
-
-Analytics
-
-UI Placeholder
-
-Settings
-
-UI Placeholder
-
-Dashboard
+### Dashboard
 
 Provides the main procurement overview and navigation into the application's modules.
 
-Purchase Requests
+### Purchase Requests
 
 Supports creation and management of procurement requests, including department, amount, description, and request status.
 
-Purchase Orders
+### Purchase Orders
 
 Supports purchase orders created from approved purchase requests, including supplier, amount, and order status.
 
-Suppliers
+### Suppliers
 
 Provides centralized supplier records including contact details, address, and supplier status.
 
-Contracts
+### Contracts
 
 Supports supplier contract management, including:
 
-Contract creation
-
-Contract editing
-
-Supplier
-
-Contract title
-
-Contract value
-
-Start and end dates
-
-Description
-
-Contract status
-
-Search and filtering
-
-Total contract value
-
-Active and draft contract counts
+- Contract creation
+- Contract editing
+- Supplier
+- Contract title
+- Contract value
+- Start and end dates
+- Description
+- Contract status
+- Search and filtering
+- Total contract value
+- Active and draft contract counts
 
 Contract statuses currently include:
 
-Draft
+- Draft
+- Active
+- Expired
+- Terminated
 
-Active
-
-Expired
-
-Terminated
-
-Transactions
+### Transactions
 
 Supports procurement transaction tracking, including:
 
-Purchase order association
+- Purchase order association
+- Supplier
+- Amount
+- Payment method
+- Reference number
+- Transaction status
+- Search and filtering
+- CSV export
 
-Supplier
-
-Amount
-
-Payment method
-
-Reference number
-
-Transaction status
-
-Search and filtering
-
-CSV export
-
-Categories
+### Categories
 
 Provides management of procurement categories and their status.
 
-Departments
+### Departments
 
 Provides management of organizational departments and their status.
 
-Approvals
+### Approvals
 
 The application contains the foundation for procurement approval workflows. Further workflow functionality is still under development.
 
-Analytics
+### Analytics
 
 Analytics is currently a UI placeholder. Planned reporting capabilities include procurement spending, supplier performance, department-wise spending, procurement trends, and KPIs.
 
-Settings
+### Settings
 
 Settings is currently a UI placeholder for future system and user configuration.
 
-4. System Architecture
+---
 
+# 4. System Architecture
+
+```text
                     PROCUREMENT MANAGEMENT SYSTEM
                                │
                ┌───────────────┴───────────────┐
@@ -233,9 +176,13 @@ Settings is currently a UI placeholder for future system and user configuration.
                          SQLAlchemy ORM
                                │
                             SQLite
+```
 
-5. Project Structure
+---
 
+# 5. Project Structure
+
+```text
 procurement-management/
 │
 ├── README.md
@@ -264,84 +211,113 @@ procurement-management/
         │   ├── Departments.tsx
         │   └── Approvals.tsx
         └── App.tsx
+```
 
-6. How to Run the Project
+---
 
-The frontend and backend run as two separate development processes.
+# 6. How to Run the Project
 
-Prerequisites
+The frontend and backend run as **two separate development processes**.
+
+## Prerequisites
 
 Install:
 
-Node.js
+- Node.js
+- npm
+- Python 3.x
+- Git
 
-npm
+---
 
-Python 3.x
+## 6.1 Start the Backend
 
-Git
-
-6.1 Start the Backend
-
-Open Terminal 1.
+Open **Terminal 1**.
 
 From the project root:
 
+```powershell
 cd C:\Users\Sabiha\procurement-management\backend
+```
 
 Activate the existing virtual environment:
 
+```powershell
 .\.venv\Scripts\Activate.ps1
+```
 
 If the virtual environment has not been created yet:
 
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+```
 
 Install dependencies:
 
+```powershell
 pip install -r requirements.txt
+```
 
 Start FastAPI:
 
+```powershell
 uvicorn app.main:app --reload
+```
 
 Backend:
 
+```text
 http://127.0.0.1:8000
+```
 
 Swagger API documentation:
 
+```text
 http://127.0.0.1:8000/docs
+```
 
 Keep this terminal running.
 
-6.2 Start the Frontend
+---
 
-Open Terminal 2.
+## 6.2 Start the Frontend
+
+Open **Terminal 2**.
 
 From the project root:
 
+```powershell
 cd C:\Users\Sabiha\procurement-management\frontend
+```
 
 Install frontend dependencies:
 
+```powershell
 npm install
+```
 
 Start the Vite development server:
 
+```powershell
 npm run dev
+```
 
 The frontend will normally be available at:
 
+```text
 http://localhost:5173
+```
 
 Keep this terminal running.
 
-6.3 Open the Application
+---
+
+## 6.3 Open the Application
 
 After both servers are running:
 
+```text
 Frontend:
 http://localhost:5173
 
@@ -350,13 +326,17 @@ http://127.0.0.1:8000
 
 API Documentation:
 http://127.0.0.1:8000/docs
+```
 
 The frontend communicates with the backend through REST APIs.
 
-7. Backend API Areas
+---
+
+# 7. Backend API Areas
 
 Current API areas include:
 
+```text
 /api/purchase-requests
 /api/purchase-orders
 /api/suppliers
@@ -364,18 +344,23 @@ Current API areas include:
 /api/transactions
 /api/categories
 /api/departments
+```
 
 FastAPI Swagger can be used to inspect and test the available endpoints.
 
-8. Database
+---
+
+# 8. Database
 
 The local development environment uses SQLite with SQLAlchemy.
 
-The local database file is intentionally excluded from Git through .gitignore.
+The local database file is intentionally excluded from Git through `.gitignore`.
 
 This keeps the repository focused on source code rather than machine-specific development data.
 
-9. Development Workflow
+---
+
+# 9. Development Workflow
 
 Start Backend
      ↓
@@ -392,62 +377,65 @@ Review Git changes
 Commit
      ↓
 Push to GitHub
+```
 
 Example:
 
+```powershell
 git status
 git add .
 git commit -m "Update procurement module"
 git push
+```
 
-10. Repository Hygiene
+---
 
-The repository uses .gitignore to prevent local and sensitive development files from being committed.
+# 10. Repository Hygiene
+
+The repository uses `.gitignore` to prevent local and sensitive development files from being committed.
 
 Examples include:
 
+```text
 node_modules/
 .venv/
 *.db
 .env
+```
 
 Do not commit passwords, API keys, secret credentials, local databases, or virtual environments.
 
-11. Current Development Status
+---
+
+# 11. Current Development Status
 
 The core procurement management workflow is implemented across the main procurement modules.
 
-The application currently has working frontend/backend integration for the implemented modules, while Approvals, Analytics, and Settings contain areas that are still under development or represented as UI placeholders.
+The application currently has working frontend/backend integration for the implemented modules, while **Approvals, Analytics, and Settings contain areas that are still under development or represented as UI placeholders**.
 
-12. Future Development
+---
+
+# 12. Future Development
 
 Planned extensions include:
 
-Expanded approval workflows
+- Expanded approval workflows
+- Procurement analytics and reporting
+- Advanced dashboard KPIs
+- Authentication and authorization
+- Role-based access control
+- Supplier performance analytics
+- Contract expiry notifications
+- Notification workflows
+- Advanced reporting
+- Production database configuration
+- Deployment infrastructure
 
-Procurement analytics and reporting
+---
 
-Advanced dashboard KPIs
+# 13. Author
 
-Authentication and authorization
-
-Role-based access control
-
-Supplier performance analytics
-
-Contract expiry notifications
-
-Notification workflows
-
-Advanced reporting
-
-Production database configuration
-
-Deployment infrastructure
-
-13. Author
-
-Sabiha Chikte
+**Sabiha Chikte**  
 B.E. Information Technology
 
 Procurement Management System — Full-Stack Application
