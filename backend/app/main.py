@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
 
+
 from .database import Base, engine, get_db
 from .models import (
     PurchaseRequest,
@@ -11,6 +12,8 @@ from .models import (
     Supplier,
     Department,
     Category,
+    Transaction,
+    Contract,
 )
 
 # Create database tables
@@ -117,6 +120,49 @@ class CategoryUpdate(BaseModel):
 
 
 class CategoryStatusUpdate(BaseModel):
+    status: str
+
+
+
+# ----------------------------
+# Transaction
+# ----------------------------
+
+class TransactionCreate(BaseModel):
+    purchase_order_id: int
+    amount: float
+    payment_method: Optional[str] = None
+    reference_number: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class TransactionStatusUpdate(BaseModel):
+    status: str
+
+
+# ----------------------------
+# Contract
+# ----------------------------
+
+class ContractCreate(BaseModel):
+    supplier: str
+    title: str
+    contract_value: float
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    description: Optional[str] = None
+
+
+class ContractUpdate(BaseModel):
+    supplier: Optional[str] = None
+    title: Optional[str] = None
+    contract_value: Optional[float] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    description: Optional[str] = None
+
+
+class ContractStatusUpdate(BaseModel):
     status: str
 
 
@@ -704,3 +750,227 @@ def update_category_status(
     db.refresh(item)
 
     return item
+
+
+
+# ============================================================
+# TRANSACTIONS
+# ============================================================
+
+@app.get("/api/transactions")
+def get_transactions(db: Session = Depends(get_db)):
+    return (
+        db.query(Transaction)
+        .order_by(Transaction.id.desc())
+        .all()
+    )
+
+
+@app.post("/api/transactions")
+def create_transaction(
+    transaction: TransactionCreate,
+    db: Session = Depends(get_db)
+):
+    # Find the associated purchase order.
+    order = (
+        db.query(PurchaseOrder)
+        .filter(PurchaseOrder.id == transaction.purchase_order_id)
+        .first()
+    )
+
+    if not order:
+        raise HTTPException(
+            status_code=404,
+            detail="Purchase order not found"
+        )
+
+    if transaction.amount <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Amount must be greater than zero"
+        )
+
+    new_transaction = Transaction(
+        purchase_order_id=order.id,
+        supplier=order.supplier,
+        amount=transaction.amount,
+        payment_method=transaction.payment_method,
+        reference_number=transaction.reference_number,
+        notes=transaction.notes,
+        status="Pending"
+    )
+
+    db.add(new_transaction)
+    db.commit()
+    db.refresh(new_transaction)
+
+    return new_transaction
+
+
+@app.patch("/api/transactions/{transaction_id}/status")
+def update_transaction_status(
+    transaction_id: int,
+    update: TransactionStatusUpdate,
+    db: Session = Depends(get_db)
+):
+    item = (
+        db.query(Transaction)
+        .filter(Transaction.id == transaction_id)
+        .first()
+    )
+
+    if not item:
+        raise HTTPException(
+            status_code=404,
+            detail="Transaction not found"
+        )
+
+    if update.status not in ["Pending", "Completed", "Failed"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Status must be Pending, Completed, or Failed"
+        )
+
+    item.status = update.status
+
+    db.commit()
+    db.refresh(item)
+
+    return item
+
+# ============================================================
+# CONTRACTS
+# ============================================================
+
+@app.get("/api/contracts")
+def get_contracts(db: Session = Depends(get_db)):
+    return (
+        db.query(Contract)
+        .order_by(Contract.id.desc())
+        .all()
+    )
+
+
+@app.post("/api/contracts")
+def create_contract(
+    contract: ContractCreate,
+    db: Session = Depends(get_db)
+):
+    if not contract.supplier.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Supplier is required"
+        )
+
+    if not contract.title.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Contract title is required"
+        )
+
+    if contract.contract_value <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Contract value must be greater than zero"
+        )
+
+    new_contract = Contract(
+        supplier=contract.supplier.strip(),
+        title=contract.title.strip(),
+        contract_value=contract.contract_value,
+        start_date=contract.start_date,
+        end_date=contract.end_date,
+        description=contract.description,
+        status="Draft"
+    )
+
+    db.add(new_contract)
+    db.commit()
+    db.refresh(new_contract)
+
+    return new_contract
+
+
+@app.put("/api/contracts/{contract_id}")
+def update_contract(
+    contract_id: int,
+    contract: ContractUpdate,
+    db: Session = Depends(get_db)
+):
+    item = (
+        db.query(Contract)
+        .filter(Contract.id == contract_id)
+        .first()
+    )
+
+    if not item:
+        raise HTTPException(
+            status_code=404,
+            detail="Contract not found"
+        )
+
+    updates = contract.model_dump(exclude_unset=True)
+
+    if "supplier" in updates:
+        if not updates["supplier"] or not updates["supplier"].strip():
+            raise HTTPException(
+                status_code=400,
+                detail="Supplier cannot be empty"
+            )
+        updates["supplier"] = updates["supplier"].strip()
+
+    if "title" in updates:
+        if not updates["title"] or not updates["title"].strip():
+            raise HTTPException(
+                status_code=400,
+                detail="Contract title cannot be empty"
+            )
+        updates["title"] = updates["title"].strip()
+
+    if "contract_value" in updates:
+        if updates["contract_value"] <= 0:
+            raise HTTPException(
+                status_code=400,
+                detail="Contract value must be greater than zero"
+            )
+
+    for field, value in updates.items():
+        setattr(item, field, value)
+
+    db.commit()
+    db.refresh(item)
+
+    return item
+
+
+@app.patch("/api/contracts/{contract_id}/status")
+def update_contract_status(
+    contract_id: int,
+    update: ContractStatusUpdate,
+    db: Session = Depends(get_db)
+):
+    item = (
+        db.query(Contract)
+        .filter(Contract.id == contract_id)
+        .first()
+    )
+
+    if not item:
+        raise HTTPException(
+            status_code=404,
+            detail="Contract not found"
+        )
+
+    if update.status not in ["Draft", "Active", "Expired", "Terminated"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid contract status"
+        )
+
+    item.status = update.status
+
+    db.commit()
+    db.refresh(item)
+
+    return item
+
