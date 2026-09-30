@@ -362,6 +362,7 @@ This keeps the repository focused on source code rather than machine-specific de
 
 # 9. Development Workflow
 
+```text
 Start Backend
      ↓
 Start Frontend
